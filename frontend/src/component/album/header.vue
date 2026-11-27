@@ -1,5 +1,5 @@
 <template>
-  <section ref="header" class="p-album-header" :style="[tone, { '--album-header-min-height': `${minimumHeight}px` }]" :aria-label="album.Title">
+  <section ref="header" class="p-album-header" :class="{ 'album-header--placeholder': !imageUrl }" :style="[tone, { '--album-header-min-height': `${minimumHeight}px` }]" :aria-label="album.Title">
     <div v-if="imageUrl" class="album-header-backdrop" :style="{ backgroundImage: `url(${imageUrl})` }"></div>
     <img v-if="imageUrl" ref="image" :key="imageUrl" class="album-header-image" :src="imageUrl" :style="imageStyle" alt="" decoding="async" @load="onImageLoad" @error="onImageError" />
     <div ref="copy" class="album-header-copy">
@@ -17,7 +17,7 @@
 
 <script>
 import $api from "common/api";
-import { albumCoverFrame, albumCoverTone, albumCollapseProgress } from "common/album-view";
+import { albumCoverFrame, albumCoverThumb, albumCoverTone, albumCollapseProgress } from "common/album-view";
 
 export default {
   name: "PAlbumHeader",
@@ -25,7 +25,7 @@ export default {
     album: { type: Object, required: true },
     revision: { type: Number, default: 0 },
   },
-  emits: ["appearance", "collapsed", "collapse-progress"],
+  emits: ["appearance", "collapsed", "collapse-progress", "cover"],
   // data initializes independent cover loading and layout state.
   data() {
     return { cover: null, imageUrl: "", frame: {}, tone: albumCoverTone([]), expanded: false, overflowing: false, request: 0, minimumHeight: 0, toneLayout: "", descriptionHeight: null };
@@ -69,6 +69,23 @@ export default {
     cancelAnimationFrame(this.layoutFrame);
   },
   methods: {
+    // updateThumbnail selects a configured fit for the current viewport and cover ratio.
+    updateThumbnail() {
+      const header = this.$refs.header;
+      const { Hash, Width, Height } = this.cover || {};
+      if (!Hash || !header) {
+        return;
+      }
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const size = albumCoverThumb(this.$config.values?.thumbs, header.clientWidth * dpr, header.clientHeight * dpr, Width, Height);
+      const url = `${this.$config.contentUri}/t/${Hash}/${this.$config.previewToken}/${size}`;
+      if (this.imageUrl !== url) {
+        this.toneLayout = "";
+        this.tone = albumCoverTone();
+        this.$emit("appearance", this.tone);
+        this.imageUrl = url;
+      }
+    },
     // queueMeasure batches layout changes while the description expands.
     queueMeasure() {
       if (!this.layoutFrame) {
@@ -109,17 +126,16 @@ export default {
           return;
         }
         this.cover = data;
+        this.$emit("cover", data.Hash || "");
         if (!data.Hash) {
           this.onImageError();
           return;
         }
-        const width = this.$refs.header?.clientWidth || window.innerWidth;
-        const target = width * Math.min(window.devicePixelRatio || 1, 2);
-        const size = [720, 1280, 1600, 1920, 2048, 2560, 3840].find((value) => value >= target) || 3840;
-        this.imageUrl = `${this.$config.contentUri}/t/${data.Hash}/${this.$config.previewToken}/fit_${size}`;
+        this.updateThumbnail();
         this.$nextTick(this.measure);
       }).catch(() => {
         if (request === this.request) {
+          this.$emit("cover", "");
           this.onImageError();
         }
       });
@@ -132,6 +148,9 @@ export default {
         return;
       }
       this.updateCollapse();
+      if (this.imageUrl) {
+        this.updateThumbnail();
+      }
       const toolbarHeight = header.parentElement?.querySelector(".p-album-toolbar .v-toolbar")?.clientHeight || 48;
       const captionHeight = this.$refs.copy?.clientHeight || 0;
       this.minimumHeight = toolbarHeight + captionHeight + 120;
@@ -143,11 +162,11 @@ export default {
         this.overflowing = description.scrollHeight > shortenedHeight + 1;
         this.descriptionHeight = this.expanded ? description.scrollHeight : shortenedHeight;
       }
-      if (image?.complete && image.naturalWidth) {
+      if (image?.complete && image.naturalWidth && image.getAttribute("src") === this.imageUrl) {
         this.updateTone();
       }
     },
-    // onImageLoad measures a decoded image before choosing its text color.
+    // onImageLoad measures a decoded image before updating its shading.
     onImageLoad() {
       this.measure();
     },
@@ -170,17 +189,13 @@ export default {
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d", { willReadFrequently: true });
 
-        canvas.width = 32;
-        canvas.height = 32;
-        context.drawImage(image, 0, 0, 32, 32);
-        const source = context.getImageData(0, 0, 32, 32).data;
-
+        // Cross-origin covers without CORS remain visible and use the default shade.
         canvas.width = header.clientWidth;
         canvas.height = header.clientHeight;
         context.drawImage(image, left, top, width, height);
         const caption = context.getImageData(copyLeft, copyTop, copyWidth, copyHeight).data;
         const toolbar = context.getImageData(0, 0, canvas.width, toolbarHeight).data;
-        this.tone = albumCoverTone(source, caption, toolbar);
+        this.tone = albumCoverTone(caption, toolbar);
       } catch {
         this.tone = albumCoverTone([]);
       }

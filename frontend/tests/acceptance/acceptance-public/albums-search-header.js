@@ -1,92 +1,105 @@
-import { ClientFunction, Selector } from "testcafe";
 import testcafeconfig from "../../testcafeconfig.json";
+import Album from "../page-model/album";
+import AlbumDialog from "../page-model/dialog-album";
+import Menu from "../page-model/menu";
+import Notifies from "../page-model/notifications";
+import Photo from "../page-model/photo";
+import PhotoViewer from "../page-model/photoviewer";
+import Toolbar from "../page-model/toolbar";
+import { helperBeforeFixture, helperBeforeEach, helperAfterEach } from "../page-model/helpers";
 
-const origin = process.env.PHOTOPRISM_TEST_URL || new URL(testcafeconfig.url).origin;
-const api = `${origin}/api/v1/`;
-const locationQuery = ClientFunction(() => window.location.search);
-const photos = Selector(".p-page-album-photos .media.result[data-uid]");
-const search = Selector(".album-search-field input");
+fixture`Test album search and header`
+  .page`${testcafeconfig.url}`
+  .before(helperBeforeFixture)
+  .beforeEach(helperBeforeEach)
+  .afterEach(helperAfterEach);
 
-fixture`Album Search and Header`
-  .page`${origin}/library/albums`
-  .beforeEach(async (t) => {
-    const available = await t.request(`${api}photos?count=30&primary=true&public=true&type=image`);
-    const selected = [...new Map(available.body.map((photo) => [photo.UID, photo])).values()].slice(0, 12);
-    await t.expect(selected.length).gte(2);
-    const created = await t.request({ url: `${api}albums`, method: "post", body: { Title: `Album Search Acceptance ${Date.now()}` } });
-    t.ctx.album = created.body;
-    t.ctx.photos = selected;
-    await t.request({ url: `${api}albums/${created.body.UID}/photos`, method: "post", body: { photos: selected.map((photo) => photo.UID) } });
-    await t.request({ url: `${api}albums/${created.body.UID}`, method: "put", body: { Description: "A long album description. ".repeat(30), Thumb: selected[0].Hash, ThumbSrc: "manual" } });
-    await t.navigateTo(`${origin}/library/albums/${created.body.UID}/view?view=cards`);
-    await t.expect(photos.count).eql(selected.length);
-  })
-  .afterEach(async (t) => {
-    if (t.ctx.album) {
-      await t.request({ url: `${api}albums/${t.ctx.album.UID}?force=true`, method: "delete" });
-    }
-  });
+const album = new Album();
+const albumDialog = new AlbumDialog();
+const menu = new Menu();
+const notifies = new Notifies();
+const photo = new Photo();
+const viewer = new PhotoViewer();
+const toolbar = new Toolbar();
 
-test.meta({ testID: "albums-search-001", type: "short", mode: "public" })("Search, sort, reload, and clear stay within the album", async (t) => {
-  await t.click(".action-album-search").typeText(search, `uid:${t.ctx.photos[0].UID}`).pressKey("enter");
-  await t.expect(photos.count).eql(1);
-  await t.click(".action-album-sort").click(".action-album-sort-size");
-  await t.expect(locationQuery()).contains("order=size").expect(locationQuery()).contains("q=");
-  await t.click(".action-album-sort").click(".action-album-sort-size");
-  await t.expect(locationQuery()).contains("reverse=true");
+const albumCat = "pqmxlr23mv73aj2f";
+const outsideCat = "pqmxlr6ze5u9jjig";
+const tower = "pqmxlr12pi8arvey";
+
+// openCollection opens a fixture collection by title and waits for its results.
+async function openCollection(page, title) {
+  await menu.openPage(page);
+  await toolbar.search(title);
+  await album.openAlbumWithUid(await album.getAlbumUidByTitle(title));
+  await notifies.waitForPhotosToLoad(8000);
+}
+
+test.meta("testID", "albums-search-001").meta({ type: "short", mode: "public" })("Common: Keep album search scoped across reload and clear", async (t) => {
+  await menu.openPage("browse");
+  await toolbar.search("label:cat");
+  await photo.checkPhotoVisibility(outsideCat, true);
+  await openCollection("albums", "Holiday");
+  await photo.checkPhotoVisibility(tower, true);
+  await toolbar.searchAlbum("label:cat");
+  await t.expect(photo.results.count).eql(1);
+  await photo.checkPhotoVisibility(albumCat, true);
+  await photo.checkPhotoVisibility(outsideCat, false);
+  await photo.checkPhotoVisibility(tower, false);
   await t.eval(() => window.location.reload());
-  await t.expect(search.value).eql(`uid:${t.ctx.photos[0].UID}`).expect(photos.count).eql(1);
-  await t.selectText(search).pressKey("backspace").pressKey("enter");
-  await t.expect(photos.count).eql(t.ctx.photos.length).expect(locationQuery()).notContains("q=").expect(locationQuery()).contains("order=size");
-  const saved = await t.request(`${api}albums/${t.ctx.album.UID}`);
-  await t.expect(saved.body.Order).eql(t.ctx.album.Order);
+  await notifies.waitForPhotosToLoad(8000);
+  await t.expect(toolbar.albumSearchField.value).eql("label:cat").expect(photo.results.count).eql(1);
+  await photo.checkPhotoVisibility(albumCat, true);
+  await toolbar.searchAlbum("no-matching-picture-zzqqxx");
+  await t.expect(album.emptyResults.visible).ok();
+  await t.click(album.clearSearch);
+  await notifies.waitForPhotosToLoad(8000);
+  await photo.checkPhotoVisibility(tower, true);
 });
 
-test.meta({ testID: "albums-search-002", type: "short", mode: "public" })("Header expansion, empty results, and compact controls remain usable", async (t) => {
-  await t.expect(Selector(".p-album-header h1").innerText).eql(t.ctx.album.Title);
-  await t.expect(Selector(".album-header-image").exists).ok();
-  const palette = ClientFunction(() => getComputedStyle(document.querySelector(".p-album-header")).getPropertyValue("--album-cover-ink"));
-  await t.expect(Selector(".album-header-image").addCustomDOMProperties({ loaded: (image) => image.complete && image.naturalWidth > 0 }).loaded).ok();
-  const color = await palette();
-  await t.click(".album-header-more");
-  await t.expect(Selector(".album-header-more").getAttribute("aria-expanded")).eql("true").expect(palette()).eql(color);
-  await t.click(".album-header-more").click(".action-album-search").typeText(search, "zzqqxx").pressKey("enter");
-  await t.expect(photos.count).eql(0).expect(Selector(".album-empty-state").visible).ok();
-  await t.click(".action-album-clear-search");
-  await t.expect(photos.count).eql(t.ctx.photos.length);
+test.meta("testID", "albums-search-002").meta({ type: "short", mode: "public" })("Common: Sort by title and date within an album", async (t) => {
+  await openCollection("albums", "Holiday");
+  await toolbar.sortAlbum("title");
+  await t.expect(photo.results.nth(0).getAttribute("data-uid")).eql(albumCat);
+  await toolbar.sortAlbum("title");
+  await t.expect(photo.results.nth(0).getAttribute("data-uid")).eql(tower);
+  await toolbar.sortAlbum("newest");
+  await t.expect(photo.results.nth(0).getAttribute("data-uid")).eql(albumCat);
+  await toolbar.sortAlbum("newest");
+  await t.expect(photo.results.nth(0).getAttribute("data-uid")).eql(tower);
+  await t.click(toolbar.albumSortAction);
+  await t.expect(toolbar.albumSortOption("newest").find(".v-list-item__append .v-icon").exists).ok();
+  await t.expect(toolbar.albumSortOption("added").find(".v-list-item__append .v-icon").exists).notOk();
+});
+
+test.meta("testID", "albums-search-003").meta({ type: "short", mode: "public" })("Common: Expand a description and keep the compact album navigation usable", async (t) => {
+  await openCollection("albums", "Holiday");
+  await toolbar.triggerToolbarAction("edit");
+  await t.typeText(albumDialog.description, "A long album description for the expanded header. ".repeat(45), { replace: true, paste: true });
+  await t.click(albumDialog.dialogSave);
+  await t.expect(album.headerDescription.clipped).ok();
+  await t.click(album.headerMore).expect(album.headerDescription.clipped).notOk();
+  await t.click(album.headerMore).expect(album.headerDescription.clipped).ok();
+  await t.expect(toolbar.albumCoverToolbar.visible).ok();
+  await viewer.openPhotoViewer("uid", tower);
+  const oldCover = await album.headerCover.getAttribute("src");
+  await viewer.triggerPhotoViewerAction("cover");
+  await notifies.waitForSpecficEvent("Changes successfully saved", 8000);
+  await viewer.triggerPhotoViewerAction("close-button");
+  await t.expect(album.headerCover.getAttribute("src")).notEql(oldCover);
+  await openCollection("folders", "Images");
+  await t.expect(toolbar.albumCoverToolbar.visible).ok();
   await t.scrollBy(0, 700);
-  await t.expect(Selector(".p-album-toolbar .album-toolbar--cover").exists).notOk();
-  await t.expect(Selector(".action-album-sort").visible).ok();
+  await t.expect(toolbar.albumCoverToolbar.exists).notOk();
+  await t.expect(toolbar.albumBackLink.visible).ok().expect(toolbar.compactAlbumTitle.withText("Images").visible).ok();
 });
 
-test.meta({ testID: "albums-search-003", type: "short", mode: "public" })("External cover and membership changes update the open album", async (t) => {
-  const cover = Selector(".album-header-image");
-  await t.expect(cover.getAttribute("src")).contains(t.ctx.photos[0].Hash);
-  await t.request({ url: `${api}albums/${t.ctx.album.UID}`, method: "put", body: { Thumb: t.ctx.photos[1].Hash, ThumbSrc: "manual" } });
-  await t.expect(cover.getAttribute("src")).contains(t.ctx.photos[1].Hash);
-  await t.request({ url: `${api}albums/${t.ctx.album.UID}/photos`, method: "delete", body: { photos: [t.ctx.photos[0].UID] } });
-  await t.expect(photos.count).eql(t.ctx.photos.length - 1);
-});
-
-// toolbarOpacity reads the rendered background alpha rather than component state.
-const toolbarOpacity = ClientFunction(() => {
-  const color = getComputedStyle(document.querySelector(".p-album-toolbar .v-toolbar")).backgroundColor;
-  const alpha = color.match(/^rgba\([^,]+,[^,]+,[^,]+,\s*([^)]+)\)$/);
-  return alpha ? Number(alpha[1]) : 1;
-});
-
-test.meta({ testID: "albums-search-004", type: "short", mode: "public" })("Transparent toolbar fades with scrolling and opens normal search", async (t) => {
-  await t.expect(toolbarOpacity()).eql(0);
-  await t.click(".action-album-search");
-  await t.expect(search.visible).ok().expect(toolbarOpacity()).eql(1);
-  await t.click(search).pressKey("esc");
-  await t.expect(toolbarOpacity()).eql(0);
-  await t.eval(() => {
-    const header = document.querySelector(".p-album-header").getBoundingClientRect();
-    const toolbar = document.querySelector(".p-album-toolbar .v-toolbar").getBoundingClientRect();
-    window.scrollBy({ top: header.bottom - toolbar.bottom - 60, behavior: "instant" });
-  });
-  await t.expect(toolbarOpacity()).gt(0.1).expect(toolbarOpacity()).lt(0.9);
-  await t.scrollBy(0, 400);
-  await t.expect(toolbarOpacity()).eql(1);
+test.meta("testID", "albums-search-004").meta({ type: "short", mode: "public" })("Common: Search folders and moments by a plain word", async () => {
+  await openCollection("folders", "Images");
+  await toolbar.searchAlbum("Tower");
+  await photo.checkPhotoVisibility(tower, true);
+  await photo.checkPhotoVisibility(albumCat, false);
+  await openCollection("moments", "France 2017");
+  await toolbar.searchAlbum("Bonifacio");
+  await photo.checkPhotoVisibility(outsideCat, true);
+  await photo.checkPhotoVisibility(tower, false);
 });

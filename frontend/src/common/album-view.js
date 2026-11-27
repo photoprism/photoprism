@@ -62,6 +62,25 @@ export function albumCoverFrame(width, height, imageWidth, imageHeight, faces, s
   return { width: w, height: h, left, top };
 }
 
+// albumCoverThumb selects the smallest configured fit that resolves the cover at the displayed size.
+export function albumCoverThumb(sizes, width, height, originalWidth, originalHeight) {
+  if (!(originalWidth > 0 && originalHeight > 0)) {
+    originalWidth = 16;
+    originalHeight = 9;
+  }
+  // fitRatio measures the proportion of the original a thumbnail can retain.
+  const fitRatio = (w, h) => Math.min(w / originalWidth, h / originalHeight);
+  const target = Math.min(1, Math.max(width / originalWidth, height / originalHeight));
+  const fits = (sizes || [])
+    .filter(({ size, w, h }) => size.startsWith("fit_") && w > 0 && h > 0)
+    .map(({ size, w, h }) => ({ size, ratio: fitRatio(w, h) }))
+    .sort((a, b) => a.ratio - b.ratio);
+  const cached = ["fit_720", "fit_1280", "fit_1920"];
+  return (fits.find(({ size, ratio }) => cached.includes(size) && ratio >= target)
+    || fits.find(({ ratio }) => ratio >= target)
+    || fits.at(-1))?.size || "fit_720";
+}
+
 // albumCoverLuminance returns the relative luminance of an sRGB color.
 function albumCoverLuminance(r, g, b) {
   // linear converts one sRGB channel to linear light.
@@ -70,33 +89,24 @@ function albumCoverLuminance(r, g, b) {
 }
 
 // albumCoverShade gives the minimum scrim opacity for 4.5:1 contrast in the sampled region.
-function albumCoverShade(pixels, darkInk) {
-  const limit = darkInk ? 0.175 : 1.05 / 4.5 - 0.05;
-  const extreme = darkInk ? 0 : 1;
-  const channels = [1 - extreme, 1 - extreme, 1 - extreme];
-
+function albumCoverShade(pixels) {
+  const limit = 1.05 / 4.5 - 0.05;
+  const channels = [0, 0, 0];
+  if (!pixels.length) {
+    channels.fill(1);
+  }
   for (let i = 0; i < pixels.length; i += 4) {
     if (pixels[i + 3] < 255) {
-      // Uncovered pixels show the blurred backdrop, whose color can vary.
-      channels.fill(extreme);
+      channels.fill(1);
       break;
     }
     for (let channel = 0; channel < 3; channel++) {
-      const value = pixels[i + channel] / 255;
-      channels[channel] = darkInk ? Math.min(channels[channel], value) : Math.max(channels[channel], value);
+      channels[channel] = Math.max(channels[channel], pixels[i + channel] / 255);
     }
   }
 
-  if (!pixels.length) {
-    channels.fill(extreme);
-  }
-
-  const tint = 1 - extreme;
-  // readable checks contrast after blending the scrim with the sampled color.
-  const readable = (opacity) => {
-    const luma = albumCoverLuminance(...channels.map((value) => value * (1 - opacity) + tint * opacity));
-    return darkInk ? luma >= limit : luma <= limit;
-  };
+  // readable checks the brightest possible pixel after applying black shading.
+  const readable = (opacity) => albumCoverLuminance(...channels.map((value) => value * (1 - opacity))) <= limit;
   if (readable(0)) {
     return "0";
   }
@@ -113,26 +123,16 @@ function albumCoverShade(pixels, darkInk) {
   return String(max / 100);
 }
 
-// albumCoverTone chooses one text color per cover and shades the caption and toolbar independently.
-export function albumCoverTone(pixels, caption = pixels, toolbar = pixels) {
-  let bright = 0;
-  let opaque = 0;
-  for (let i = 0; i < pixels.length; i += 4) {
-    if (pixels[i + 3] === 255) {
-      opaque++;
-      bright += Number(albumCoverLuminance(pixels[i] / 255, pixels[i + 1] / 255, pixels[i + 2] / 255) >= 0.179);
-    }
-  }
-  const darkInk = opaque > 0 && bright > opaque / 2;
+// albumCoverTone shades the caption and toolbar independently for white foregrounds.
+export function albumCoverTone(caption = [], toolbar = caption) {
   return {
-    "--album-cover-ink": darkInk ? "#000" : "#fff",
-    "--album-cover-tint": darkInk ? "255, 255, 255" : "0, 0, 0",
-    "--album-cover-shade": albumCoverShade(caption, darkInk),
-    "--album-toolbar-shade": albumCoverShade(toolbar, darkInk),
+    "--album-cover-ink": "#fff",
+    "--album-cover-shade": albumCoverShade(caption),
+    "--album-toolbar-shade": albumCoverShade(toolbar),
   };
 }
 
 // albumCollapseProgress fades the toolbar over the final visible portion of the cover.
 export function albumCollapseProgress(bottom, toolbarBottom = 48) {
-  return Math.max(0, Math.min(1, (toolbarBottom + 240 - bottom) / 240));
+  return Math.max(0, Math.min(1, (toolbarBottom + 240 - bottom) / 180));
 }

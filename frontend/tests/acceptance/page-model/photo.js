@@ -4,7 +4,9 @@ import Notifies from "../page-model/notifications";
 const notifies = new Notifies();
 
 export default class Page {
-  constructor() {}
+  constructor() {
+    this.results = Selector("div.is-photo");
+  }
 
   async getNthPhotoUid(type, nth) {
     if (type === "all") {

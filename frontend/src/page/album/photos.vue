@@ -14,7 +14,7 @@
       class="p-page__navigation"
     ></p-album-toolbar>
 
-    <p-album-header :album="model" :revision="headerRevision" @appearance="headerStyle = $event" @collapsed="headerCollapsed = $event" @collapse-progress="headerProgress = $event"></p-album-header>
+    <p-album-header :album="model" :revision="headerRevision" @appearance="headerStyle = $event" @cover="onCoverResolved" @collapsed="headerCollapsed = $event" @collapse-progress="headerProgress = $event"></p-album-header>
 
     <div v-if="loading" class="p-page__loading">
       <p-loading></p-loading>
@@ -138,10 +138,13 @@ export default {
       headerCollapsed: false,
       headerProgress: 0,
       headerRevision: 0,
+      headerHash: "",
+      headerPhotoUID: "",
       headerStyle: albumCoverTone([]),
       pendingAlbumUpdate: false,
       searchGeneration: 0,
       albumGeneration: 0,
+      albumLoading: true,
       searchFailed: false,
       isShared: this.$config.deny("photos", "manage"),
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
@@ -213,12 +216,16 @@ export default {
         this.searchGeneration++;
         this.albumGeneration++;
         this.pendingAlbumUpdate = false;
+        this.headerHash = "";
+        this.headerPhotoUID = "";
+        this.listen = false;
+        this.scrollDisabled = true;
         this.resetLastFilter();
         this.reset();
         this.loading = true;
         this.uid = this.$route.params.album;
         this.loadAlbum();
-      } else {
+      } else if (!this.albumLoading) {
         this.search();
       }
     },
@@ -230,9 +237,7 @@ export default {
     this.subscriptions.push(this.$event.subscribe("albums.updated", (ev, data) => this.onAlbumsUpdated(ev, data)));
     this.subscriptions.push(this.$event.subscribe("albums.deleted", (ev, data) => this.onAlbumsDeleted(ev, data)));
     this.subscriptions.push(this.$event.subscribe("photos", (ev, data) => {
-      if (!this.model.Thumb) {
-        this.headerRevision++;
-      }
+      this.onCoverPhotoEvent(ev, data);
       this.onUpdate(ev, data);
     }));
 
@@ -285,13 +290,13 @@ export default {
     hideExpansionPanel() {
       return this.$refs?.toolbar?.hideExpansionPanel();
     },
+    // getViewType resolves the URL or saved view without writing a preference.
     getViewType() {
-      let queryParam = this.$route.query["view"] ? this.$route.query["view"] : "";
-      let defaultType = appStorage.getItem("photos.view");
-      let storedType = appStorage.getItem("album.photos.view");
+      const queryParam = this.$route.query["view"];
+      const defaultType = appStorage.getItem("photos.view");
+      const storedType = appStorage.getItem("album.photos.view");
 
       if (queryParam) {
-        appStorage.setItem("album.photos.view", queryParam);
         return queryParam;
       } else if (storedType) {
         return storedType;
@@ -413,7 +418,7 @@ export default {
       this.lastParams = params;
 
       const generation = this.searchGeneration;
-      Photo.search(params)
+      return Photo.search(params)
         .then((response) => {
           if (generation !== this.searchGeneration) {
             return;
@@ -605,7 +610,7 @@ export default {
 
       this.lastParams = params;
 
-      Photo.search(params)
+      return Photo.search(params)
         .then((response) => {
           if (generation !== this.searchGeneration) {
             return;
@@ -661,8 +666,10 @@ export default {
     },
     // loadAlbum finds the album and searches its photos once it was found.
     loadAlbum() {
-      return this.findAlbum().then((m) => {
-        if (m) {
+      this.albumLoading = true;
+      return this.findAlbum().then((album) => {
+        if (album && album.UID === this.uid) {
+          this.albumLoading = false;
           this.search();
         }
       });
@@ -689,6 +696,56 @@ export default {
           }
           return null;
         });
+    },
+    // onCoverResolved tracks the cover photo across searches that hide it.
+    onCoverResolved(hash) {
+      if (this.model.UID !== this.uid || hash === this.headerHash) {
+        return;
+      }
+      const uid = this.uid;
+      this.headerHash = hash;
+      this.headerPhotoUID = "";
+      if (!hash || this.model.Thumb) {
+        return;
+      }
+      return Photo.search({ s: uid, hash, count: 1, merged: true }).then(({ models }) => {
+        if (this.uid === uid && this.headerHash === hash && !this.albumLoading) {
+          this.headerPhotoUID = models[0]?.UID || "";
+        }
+      }).catch(() => {
+        if (this.uid === uid && this.headerHash === hash) {
+          this.headerHash = "";
+        }
+      });
+    },
+    // onCoverPhotoEvent checks photo events against the current album's unfiltered membership.
+    async onCoverPhotoEvent(ev, data) {
+      const ids = data?.entities;
+      if (this.model.UID !== this.uid || this.model.Thumb || !Array.isArray(ids) || !ids.length) {
+        return;
+      }
+      const changed = new Set(ids);
+      if (changed.has(this.headerPhotoUID) || this.results.some(({ UID }) => changed.has(UID))) {
+        this.headerRevision++;
+        return;
+      }
+      if (ev !== "photos.updated" && ev !== "photos.created" && ev !== "photos.restored") {
+        return;
+      }
+
+      const uid = this.uid;
+      const generation = this.albumGeneration;
+      for (let offset = 0; offset < ids.length; offset += maxLiveRefetch) {
+        const batch = ids.slice(offset, offset + maxLiveRefetch).join("|");
+        const response = await Photo.search({ s: uid, uid: batch, count: 1, merged: true }).catch(() => null);
+        if (this.uid !== uid || this.albumGeneration !== generation) {
+          return;
+        }
+        if (response?.models?.length) {
+          this.headerRevision++;
+          return;
+        }
+      }
     },
     // onAlbumsUpdated reloads scoped album metadata without replacing the active photo view.
     onAlbumsUpdated(ev, data) {
@@ -791,8 +848,12 @@ export default {
         return;
       }
 
+      const generation = this.searchGeneration;
       Photo.search({ uid: affected.join("|"), merged: true, count: affected.length * maxRefetchFilesPerPhoto })
         .then((resp) => {
+          if (generation !== this.searchGeneration) {
+            return;
+          }
           const found = new Set();
 
           resp.models.forEach((values) => {
@@ -817,8 +878,10 @@ export default {
           }
         })
         .catch(() => {
-          this.dirty = true;
-          this.complete = false;
+          if (generation === this.searchGeneration) {
+            this.dirty = true;
+            this.complete = false;
+          }
         });
     },
     removeResult(results, uid) {

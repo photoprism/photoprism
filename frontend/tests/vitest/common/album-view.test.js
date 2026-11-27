@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { AlbumSortOptions, albumOrder, nextAlbumOrder, albumCoverFrame, albumCoverTone, albumCollapseProgress } from "common/album-view";
+import { AlbumSortOptions, albumOrder, nextAlbumOrder, albumCoverFrame, albumCoverThumb, albumCoverTone, albumCollapseProgress } from "common/album-view";
 
 describe("album view ordering", () => {
   it("uses saved ordering and normalizes URL directions", () => {
@@ -50,46 +50,45 @@ describe("album cover framing", () => {
     expect(albumCoverFrame(100, 100, 200, 100)).toEqual({ width: 200, height: 100, left: -50, top: 0 });
     expect(albumCoverFrame(0, 100, 200, 100).width).toBe(0);
   });
-  it("uses no shade on a uniformly light or dark cover", () => {
-    expect(albumCoverTone([255, 255, 255, 255])).toMatchObject({
-      "--album-cover-ink": "#000",
-      "--album-cover-tint": "255, 255, 255",
-      "--album-cover-shade": "0",
-      "--album-toolbar-shade": "0",
-    });
-    expect(albumCoverTone([0, 0, 0, 255])).toMatchObject({
-      "--album-cover-ink": "#fff",
-      "--album-cover-tint": "0, 0, 0",
-      "--album-cover-shade": "0",
-      "--album-toolbar-shade": "0",
-    });
-  });
-  it("shades only the region that needs contrast for the cover's text color", () => {
+  it("independently shades both regions for white text", () => {
     const white = [255, 255, 255, 255];
     const black = [0, 0, 0, 255];
-    const mostlyWhite = [...white, ...white, ...black];
-    expect(albumCoverTone(mostlyWhite, black, white)).toMatchObject({
-      "--album-cover-ink": "#000",
-      "--album-cover-shade": "0.46",
+    expect(albumCoverTone(white, black)).toEqual({
+      "--album-cover-ink": "#fff",
+      "--album-cover-shade": "0.54",
       "--album-toolbar-shade": "0",
     });
-    expect(albumCoverTone(black, black, white)).toMatchObject({
+    expect(albumCoverTone(black, white)).toMatchObject({
       "--album-cover-ink": "#fff",
       "--album-cover-shade": "0",
       "--album-toolbar-shade": "0.54",
     });
   });
   it("uses a contrast-safe shade where the cover is unavailable", () => {
-    expect(albumCoverTone([])["--album-cover-shade"]).toBe("0.54");
-    expect(albumCoverTone([255, 255, 255, 255], [0, 0, 0, 0])["--album-cover-shade"]).toBe("0.46");
+    expect(albumCoverTone()["--album-cover-shade"]).toBe("0.54");
+    expect(albumCoverTone([0, 0, 0, 0])["--album-toolbar-shade"]).toBe("0.54");
+  });
+  it("selects configured fits by rendered width and height", () => {
+    const sizes = [
+      { size: "fit_2048", w: 2048, h: 2048 },
+      { size: "fit_720", w: 720, h: 480 },
+      { size: "fit_1280", w: 1280, h: 1024 },
+      { size: "fit_1600", w: 1600, h: 900 },
+      { size: "fit_1920", w: 1920, h: 1200 },
+    ];
+    expect(albumCoverThumb(sizes, 1450, 400, 4000, 3000)).toBe("fit_1920");
+    expect(albumCoverThumb(sizes, 1440, 400, 3000, 4000)).toBe("fit_2048");
+    expect(albumCoverThumb(sizes, 800, 400, 2000, 2000)).toBe("fit_1280");
+    expect(albumCoverThumb(sizes.slice(1), 1440, 400, 3000, 4000)).toBe("fit_1920");
+    expect(albumCoverThumb([], 1440, 400, 3000, 4000)).toBe("fit_720");
   });
 });
 
 describe("album toolbar transition", () => {
   it("is transparent at the top and fades continuously before the cover disappears", () => {
     expect(albumCollapseProgress(350)).toBe(0);
-    expect(albumCollapseProgress(168)).toBe(0.5);
-    expect(albumCollapseProgress(48)).toBe(1);
+    expect(albumCollapseProgress(198)).toBe(0.5);
+    expect(albumCollapseProgress(108)).toBe(1);
     expect(albumCollapseProgress(-100)).toBe(1);
   });
 });

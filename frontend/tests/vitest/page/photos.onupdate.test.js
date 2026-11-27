@@ -336,10 +336,11 @@ describe("page/album/photos.vue onAlbumsUpdated", () => {
   it("preserves a temporary order when the saved order changes", async () => {
     const stub = newAlbumStub();
     stub.$route.query = { order: "size", reverse: "true", q: "cat" };
+    stub.$router.replace = vi.fn();
     stub.model.find = vi.fn(() => { stub.model.Order = "newest"; return Promise.resolve(stub.model); });
     await onAlbumsUpdated.call(stub, "albums.updated", { entities: ["album-1"] });
     expect(stub.search).not.toHaveBeenCalled();
-    expect(stub.$route.query).toEqual({ order: "size", reverse: "true", q: "cat" });
+    expect(stub.$router.replace).not.toHaveBeenCalled();
   });
 
   it("queues metadata changes while photos are loading", () => {
@@ -439,7 +440,7 @@ describe("page/album/photos.vue loadAlbum", () => {
   const loadAlbum = PAlbumPhotos.methods.loadAlbum;
 
   it("searches once the album was found", async () => {
-    const stub = { findAlbum: vi.fn(() => Promise.resolve({ UID: "album-1" })), search: vi.fn() };
+    const stub = { uid: "album-1", findAlbum: vi.fn(() => Promise.resolve({ UID: "album-1" })), search: vi.fn() };
 
     await loadAlbum.call(stub);
 
@@ -451,5 +452,169 @@ describe("page/album/photos.vue loadAlbum", () => {
     await expect(loadAlbum.call(stub)).resolves.toBeUndefined();
 
     expect(stub.search).not.toHaveBeenCalled();
+  });
+});
+
+describe("page/album/photos.vue cover refresh", () => {
+  const { onCoverResolved, onCoverPhotoEvent } = PAlbumPhotos.methods;
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it("tracks an automatic cover even when it is outside the current search", async () => {
+    const scope = "as6sg6bxpogaaba8";
+    const photo = "pqmxlr12pi8arvey";
+    const hash = "a".repeat(40);
+    const stub = { uid: scope, model: { UID: scope }, headerRevision: 0, results: [] };
+    const request = vi.spyOn(Photo, "search").mockResolvedValue({ models: [{ UID: photo }] });
+    await onCoverResolved.call(stub, hash);
+    expect(request).toHaveBeenCalledWith({ s: scope, hash, count: 1, merged: true });
+    onCoverPhotoEvent.call(stub, "photos.archived", { entities: [photo] });
+    expect(stub.headerRevision).toBe(1);
+  });
+
+  it("retries the current cover lookup after a temporary failure", async () => {
+    const scope = "as6sg6bxpogaaba8";
+    const photo = "pqmxlr12pi8arvey";
+    const hash = "a".repeat(40);
+    const stub = { uid: scope, model: { UID: scope } };
+    const request = vi.spyOn(Photo, "search").mockRejectedValueOnce(new Error("offline")).mockResolvedValueOnce({ models: [{ UID: photo }] });
+    await onCoverResolved.call(stub, hash);
+    await onCoverResolved.call(stub, hash);
+    expect(request).toHaveBeenCalledTimes(2);
+    expect(stub.headerPhotoUID).toBe(photo);
+  });
+
+  it("only refreshes the cover for newly matching album members", async () => {
+    const scope = "as6sg6bxpogaaba8";
+    const photo = "pqmxlr12pi8arvey";
+    const stub = { uid: scope, model: { UID: scope }, albumGeneration: 1, headerRevision: 0, results: [] };
+    const request = vi.spyOn(Photo, "search").mockResolvedValueOnce({ models: [] }).mockResolvedValueOnce({ models: [{ UID: photo }] });
+    await onCoverPhotoEvent.call(stub, "photos.updated", { entities: [photo] });
+    expect(stub.headerRevision).toBe(0);
+    expect(request).toHaveBeenCalledWith({ s: scope, uid: photo, count: 1, merged: true });
+    await onCoverPhotoEvent.call(stub, "photos.restored", { entities: [photo] });
+    expect(stub.headerRevision).toBe(1);
+  });
+
+  it("discards a membership probe for an earlier album generation", async () => {
+    const scope = "as6sg6bxpogaaba8";
+    const photo = "pqmxlr12pi8arvey";
+    const stub = { uid: scope, model: { UID: scope }, albumGeneration: 1, headerRevision: 0, results: [] };
+    vi.spyOn(Photo, "search").mockResolvedValue({ models: [{ UID: photo }] });
+    const pending = onCoverPhotoEvent.call(stub, "photos.updated", { entities: [photo] });
+    stub.albumGeneration++;
+    await pending;
+    expect(stub.headerRevision).toBe(0);
+  });
+});
+
+
+describe("page/album/photos.vue search lifecycle", () => {
+  const { search, searchParams, loadMore, sortOrder, sortReverse } = PAlbumPhotos.methods;
+
+  afterEach(() => vi.restoreAllMocks());
+
+  // searchState configures an album query without rendering the page.
+  function searchState(order = "oldest") {
+    return {
+      uid: "as6sg6bxpogaaba8", batchSize: 10, offset: 0, page: 0, searchGeneration: 0,
+      lightbox: { results: [] }, results: [], filter: { q: "cat" }, lastFilter: { q: "cat" },
+      model: { UID: "as6sg6bxpogaaba8", Order: "newest" },
+      $route: { query: { order, reverse: "true" } },
+      $view: { isHidden: () => false }, $notify: { warn: vi.fn(), info: vi.fn() },
+      $gettext: (message) => message,
+      sortOrder, sortReverse, searchParams, reset: vi.fn(), hideExpansionPanel: vi.fn(),
+    };
+  }
+
+  it.each(["newest", "oldest"])("omits reverse when requesting Date Taken (%s)", async (order) => {
+    const stub = searchState(order);
+    const request = vi.spyOn(Photo, "search").mockResolvedValue({ count: 0, models: [] });
+    await search.call(stub);
+    expect(request.mock.calls[0][0]).toMatchObject({ s: stub.uid, q: "cat", order });
+    expect(request.mock.calls[0][0]).not.toHaveProperty("reverse");
+    expect(stub.results).toEqual([]);
+    expect(stub.searchFailed).toBe(false);
+    expect(stub.$notify.warn).toHaveBeenCalledWith("No pictures found");
+  });
+
+  it("does not reset the current search when an old request fails", async () => {
+    const stub = searchState();
+    let reject;
+    vi.spyOn(Photo, "search").mockReturnValue(new Promise((resolve, fail) => { reject = fail; }));
+    const pending = search.call(stub);
+    stub.searchGeneration++;
+    stub.dirty = true;
+    reject(new Error("old search"));
+    await pending;
+    expect(stub.reset).not.toHaveBeenCalled();
+    expect(stub.searchFailed).toBe(false);
+    expect(stub.loading).toBe(true);
+    expect(stub.listen).toBe(false);
+    expect(stub.dirty).toBe(true);
+  });
+
+  it("does not merge a stale loadMore response into the next album", async () => {
+    const stub = searchState();
+    let resolve;
+    vi.spyOn(Photo, "search").mockReturnValue(new Promise((done) => { resolve = done; }));
+    const merge = vi.spyOn(Photo, "mergeResponse");
+    const pending = loadMore.call(stub, true);
+    stub.searchGeneration++;
+    resolve({ count: 1, models: [{ UID: "pqmxlr12pi8arvey" }] });
+    await pending;
+    expect(merge).not.toHaveBeenCalled();
+    expect(stub.results).toEqual([]);
+    expect(stub.scrollDisabled).toBe(true);
+    expect(stub.listen).toBe(false);
+  });
+
+  it("keeps scrolling disabled when an older loadMore request fails", async () => {
+    const stub = searchState();
+    let reject;
+    vi.spyOn(Photo, "search").mockReturnValue(new Promise((resolve, fail) => { reject = fail; }));
+    const pending = loadMore.call(stub, true);
+    stub.searchGeneration++;
+    stub.dirty = true;
+    reject(new Error("old scroll request"));
+    await pending;
+    expect(stub.scrollDisabled).toBe(true);
+    expect(stub.listen).toBe(false);
+    expect(stub.dirty).toBe(true);
+  });
+
+  it("does not persist the URL view when the route updates after sorting", () => {
+    const stub = searchState();
+    stub.$route = { params: { album: stub.uid }, name: "album", query: { order: "title", view: "cards" } };
+    stub.routeName = "album";
+    stub.$view = { isActive: () => true, focus: vi.fn() };
+    stub.settings = {};
+    stub.getViewType = PAlbumPhotos.methods.getViewType;
+    stub.search = vi.fn();
+    const write = vi.spyOn(Storage.prototype, "setItem");
+    PAlbumPhotos.watch.$route.call(stub);
+    expect(stub.settings.view).toBe("cards");
+    expect(stub.search).toHaveBeenCalledOnce();
+    expect(write).not.toHaveBeenCalled();
+  });
+
+  it("restores route filters and pauses events before loading another album", () => {
+    const stub = searchState();
+    stub.$route = { params: { album: "as6sg6bxpogaaba7" }, name: "album", query: { q: "landscape" } };
+    stub.$view = { isActive: () => true, focus: vi.fn() };
+    stub.getViewType = () => "cards";
+    stub.settings = {};
+    stub.resetLastFilter = vi.fn();
+    stub.albumGeneration = 0;
+    stub.listen = true;
+    stub.scrollDisabled = false;
+    stub.loadAlbum = vi.fn(() => {
+      expect(stub.uid).toBe("as6sg6bxpogaaba7");
+      expect(stub.filter.q).toBe("landscape");
+      expect(stub.listen).toBe(false);
+      expect(stub.scrollDisabled).toBe(true);
+    });
+    PAlbumPhotos.watch.$route.call(stub);
+    expect(stub.loadAlbum).toHaveBeenCalledOnce();
   });
 });

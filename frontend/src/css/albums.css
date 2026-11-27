@@ -43,14 +43,22 @@
     z-index: -1;
     inset: -64px 0 0;
     inset-inline-end: -48px;
-    background: linear-gradient(to top, rgb(var(--album-cover-tint, 0, 0, 0)) calc(100% - 64px), transparent);
+    background: linear-gradient(to top, black calc(100% - 64px), transparent);
     mask-image: linear-gradient(to var(--album-caption-fade, right), black calc(100% - 48px), transparent);
-    opacity: var(--album-cover-shade, 0.55);
+    opacity: var(--album-cover-shade, 0.54);
     content: "";
 }
 
 :is([dir="rtl"], .v-locale--is-rtl) .p-album-header {
     --album-caption-fade: left;
+}
+
+.album-header-copy :is(h1, p) {
+    text-shadow:
+        -1px 0 #0006,
+        1px 0 #0006,
+        0 -1px #0006,
+        0 1px #0006;
 }
 
 .album-header-copy h1 {
@@ -86,16 +94,15 @@
     align-items: center;
     gap: 4px;
     margin-top: 10px;
-    color: inherit;
+    color: rgb(var(--v-theme-primary));
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
 }
 
 .p-album-toolbar .v-toolbar {
-    color: var(--album-toolbar-color, rgb(var(--v-theme-on-secondary))) !important;
+    color: rgb(var(--v-theme-on-secondary)) !important;
     background: rgba(var(--v-theme-secondary), var(--album-toolbar-opacity, 1)) !important;
-    transition: background-color 180ms ease;
 }
 
 .p-album-toolbar .v-toolbar__content {
@@ -130,7 +137,23 @@
     color: inherit !important;
 }
 
-.album-back-link bdi {
+.album-breadcrumb {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+}
+
+.album-breadcrumb-measure {
+    position: absolute;
+    display: flex;
+    gap: 4px;
+    visibility: hidden;
+    width: max-content;
+}
+
+.album-breadcrumb-title {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -195,9 +218,35 @@
     align-items: center;
 }
 
-.album-toolbar--cover :is(.album-toolbar-actions, .album-back-link) {
-    background-color: rgba(var(--album-cover-tint, 0, 0, 0), var(--album-toolbar-shade, 0.55));
-    border-radius: 999px;
+.p-album-toolbar .album-toolbar--cover {
+    isolation: isolate;
+    color: #fff !important;
+    background-color: rgba(0, 0, 0, var(--album-toolbar-opacity, 0)) !important;
+    transition: background-color 180ms ease;
+    overflow: visible;
+}
+
+.album-toolbar--cover::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 -36px;
+    background: linear-gradient(to bottom, black calc(100% - 36px), transparent);
+    opacity: var(--album-toolbar-shade, 0.54);
+    pointer-events: none;
+    content: "";
+}
+
+.album-toolbar--cover :is(.album-toolbar-actions .v-icon, .album-back-link) {
+    text-shadow:
+        -1px 0 #0003,
+        1px 0 #0003,
+        0 -1px #0003,
+        0 1px #0003;
+}
+
+.v-list.album-overlay-menu {
+    background: rgba(var(--v-theme-navigation), 0.88) !important;
+    backdrop-filter: blur(8px);
 }
 
 .album-toolbar--cover .album-back-link {

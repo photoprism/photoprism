@@ -59,33 +59,63 @@ describe("album cover header", () => {
     const image = wrapper.find("img").element;
     const copy = wrapper.find(".album-header-copy").element;
     Object.defineProperties(wrapper.element, { clientWidth: { value: 600 }, clientHeight: { value: 350 } });
-    Object.defineProperties(copy, { offsetWidth: { value: 250 }, offsetHeight: { value: 100, configurable: true } });
+    Object.defineProperties(copy, { offsetLeft: { value: 12 }, offsetTop: { value: 246 }, offsetWidth: { value: 250 }, offsetHeight: { value: 100, configurable: true } });
     Object.defineProperties(image, { naturalWidth: { value: 1600 }, naturalHeight: { value: 1200 }, complete: { value: true } });
     wrapper.vm.onImageLoad();
-    expect(wrapper.vm.tone["--album-cover-ink"]).toBe("#000");
-    expect(wrapper.vm.tone["--album-cover-shade"]).toBe("0");
-    expect(context.getImageData).toHaveBeenNthCalledWith(2, 0, 0, 250, 100);
-    expect(context.getImageData).toHaveBeenNthCalledWith(3, 0, 0, 600, 48);
+    expect(wrapper.vm.tone["--album-cover-ink"]).toBe("#fff");
+    expect(wrapper.vm.tone["--album-cover-shade"]).toBe("0.54");
+    expect(context.getImageData).toHaveBeenNthCalledWith(1, 12, 246, 250, 100);
+    expect(context.getImageData).toHaveBeenNthCalledWith(2, 0, 0, 600, 48);
     wrapper.vm.measure();
-    expect(context.getImageData).toHaveBeenCalledTimes(3);
+    expect(context.getImageData).toHaveBeenCalledTimes(2);
 
     Object.defineProperty(copy, "offsetHeight", { value: 140 });
-    context.getImageData.mockReturnValueOnce(white).mockReturnValueOnce(black);
+    context.getImageData.mockReturnValueOnce(black).mockReturnValueOnce(white);
     wrapper.vm.measure();
+    expect(context.getImageData).toHaveBeenNthCalledWith(3, 12, 246, 250, 140);
     expect(wrapper.emitted("appearance").at(-1)[0]).toMatchObject({
-      "--album-cover-ink": "#000", "--album-cover-shade": "0.46", "--album-toolbar-shade": "0",
+      "--album-cover-ink": "#fff", "--album-cover-shade": "0", "--album-toolbar-shade": "0.54",
+    });
+  });
+  it("keeps a cross-origin cover visible when canvas sampling is blocked", async () => {
+    vi.spyOn($api, "get").mockResolvedValue({ data: { Hash: "a".repeat(40), Width: 1600, Height: 1200 } });
+    const context = { drawImage: vi.fn(), getImageData: vi.fn(() => { throw new DOMException("Canvas is tainted", "SecurityError"); }) };
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(context);
+    const wrapper = mountHeader();
+    await flushPromises();
+    const image = wrapper.find("img");
+    Object.defineProperties(wrapper.element, { clientWidth: { value: 600 }, clientHeight: { value: 350 } });
+    Object.defineProperties(wrapper.find(".album-header-copy").element, { offsetWidth: { value: 250 }, offsetHeight: { value: 100 } });
+    Object.defineProperties(image.element, { naturalWidth: { value: 1600 }, naturalHeight: { value: 1200 }, complete: { value: true } });
+    wrapper.vm.onImageLoad();
+    expect(context.getImageData).toHaveBeenCalled();
+    expect(image.attributes("crossorigin")).toBeUndefined();
+    expect(wrapper.find("img").exists()).toBe(true);
+    expect(wrapper.emitted("appearance").at(-1)[0]).toMatchObject({
+      "--album-cover-ink": "#fff", "--album-cover-shade": "0.54", "--album-toolbar-shade": "0.54",
     });
   });
   it("expands a truncated description and keeps a readable missing-cover state", async () => {
-    vi.spyOn($api, "get").mockResolvedValue({ data: {} });
+    vi.spyOn($api, "get").mockResolvedValue({ data: { Hash: "a".repeat(40), Width: 1600, Height: 1200 } });
     const wrapper = mountHeader();
     await flushPromises();
-    await wrapper.setData({ overflowing: true });
-    expect(wrapper.find(".album-header-more").text()).toBe("Show More");
-    await wrapper.find(".album-header-more").trigger("click");
-    expect(wrapper.find("p").classes()).not.toContain("is-shortened");
-    expect(wrapper.find(".album-header-more").attributes("aria-expanded")).toBe("true");
-    expect(wrapper.element.style.getPropertyValue("--album-cover-ink")).toBe("#fff");
+    expect(wrapper.classes()).not.toContain("album-header--placeholder");
+    await wrapper.find("img").trigger("error");
+    expect(wrapper.classes()).toContain("album-header--placeholder");
     expect(wrapper.find("img").exists()).toBe(false);
+
+    const description = wrapper.find(".album-header-description");
+    const text = description.find("p").element;
+    vi.spyOn(window, "getComputedStyle").mockReturnValue({ lineHeight: "20px" });
+    Object.defineProperty(text, "scrollHeight", { value: 120 });
+    wrapper.vm.measure();
+    await wrapper.vm.$nextTick();
+    expect(description.element.style.height).toBe("40px");
+    await wrapper.find(".album-header-more").trigger("click");
+    await wrapper.vm.$nextTick();
+    expect(description.element.style.height).toBe("120px");
+    await wrapper.find(".album-header-more").trigger("click");
+    await wrapper.vm.$nextTick();
+    expect(description.element.style.height).toBe("40px");
   });
 });

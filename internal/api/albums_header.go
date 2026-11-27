@@ -13,7 +13,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// AlbumHeaderData describes a published cover without exposing photo or person metadata.
+// AlbumHeaderData describes an album cover and the area its faces occupy.
 type AlbumHeaderData struct {
 	Hash   string           `json:"Hash"`
 	Width  int              `json:"Width"`
@@ -66,7 +66,7 @@ func GetAlbumHeader(router *gin.RouterGroup) {
 		}
 
 		var markers entity.Markers
-		// Only geometry is read; identities and embeddings never enter the response.
+		// Read the positions of valid face markers.
 		if err = entity.Db().Select("x, y, w, h").Where("file_uid = ? AND marker_type = ? AND marker_invalid = FALSE", file.FileUID, entity.MarkerFace).Find(&markers).Error; err != nil {
 			AbortUnexpectedError(c)
 			return

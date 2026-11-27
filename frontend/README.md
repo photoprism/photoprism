@@ -1,6 +1,6 @@
 # PhotoPrism Frontend
 
-**Last Updated:** November 24, 2026
+**Last Updated:** November 26, 2026
 
 The Vue 3 + Vuetify 4 web UI for PhotoPrism. Built with Vite, tested with Vitest, and served by the Go backend from `assets/static/build/`.
 
@@ -10,16 +10,6 @@ Other frontend documentation lives next to this file:
 - [Code Map](CODEMAP.md) — module layout and responsibilities
 - [Common Modules](src/common/README.md) — dialog/focus patterns and shared helpers
 - [Tests & Linting](tests/README.md) — test layout and toolchain validation
-
-## Search & Sort Within Albums
-
-Open an album, folder, moment, calendar month, or place to see its cover, title, and description. Select **Show More** to expand a long description. The title, description, and toolbar controls use dark text on light covers and light text on dark covers. Where the photo has mixed tones, PhotoPrism adds shading behind the text or controls as needed. The toolbar fades into the normal PhotoPrism colors as you scroll past the cover. Opening search uses the standard search field and toolbar colors. Covers keep detected faces clear of the toolbar and caption. Group photos may show a blurred backdrop to keep everyone visible.
-
-Select the search icon, enter a word or a filter such as `label:cat`, and press Enter. Results stay within the current album. Use the field's clear button or **Clear Search** in the empty-result view to return to all its photos. Share-link visitors can sort but do not see the search control.
-
-The sort menu supports Date Taken, Title, File Name, File Size, Video Duration, Recently Added, Recently Edited, and Most Relevant. Select an active two-direction option again to reverse it. Arrows show the direction. Recently Edited lists edited photos first, followed by unedited photos. Search and sort are retained in the page URL for reloads and bookmarks. Opening the album again from its overview uses the album's saved order.
-
-Users with album management permission can choose **Set as Album Cover** in the photo viewer. The header updates in open tabs, including tabs opened through a share link. Opening a photo's location from an album shows all its mapped photos.
 
 ## Setup & Workspace
 

@@ -3,6 +3,14 @@ import { Selector, t } from "testcafe";
 export default class Page {
   constructor() {
     this.search = Selector(".input-search input");
+    this.headerTitle = Selector(".p-album-header h1");
+    this.headerCover = Selector(".album-header-image");
+    this.headerDescription = Selector(".album-header-description").addCustomDOMProperties({
+      clipped: (description) => description.scrollHeight > description.clientHeight,
+    });
+    this.headerMore = Selector(".album-header-more");
+    this.emptyResults = Selector(".album-empty-state");
+    this.clearSearch = Selector(".action-album-clear-search");
   }
 
   async getNthAlbumUid(type, nth) {

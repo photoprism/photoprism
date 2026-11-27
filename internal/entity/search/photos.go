@@ -85,7 +85,7 @@ func photoQuery(frm *form.SearchPhotos, sess *entity.Session, resultCols string,
 		frm.Scope = scope
 	}
 
-	// Membership filters cannot redirect the enclosing album scope.
+	// Album membership comes from the stored filter alone.
 	if membership != nil {
 		frm.Scope, frm.Album, frm.Albums, frm.Filter = "", "", "", ""
 		if membership.AlbumType == entity.AlbumFolder {
@@ -102,11 +102,8 @@ func photoQuery(frm *form.SearchPhotos, sess *entity.Session, resultCols string,
 	if txt.NotEmpty(frm.Near) {
 		photo := Photo{}
 
-		// Require the reference to be visible to the session before its position is used. A reference
-		// the session may not see takes the same path as a missing one. This block must stay above
-		// the scope block: PhotoVisibleToSession re-enters UserPhotos through the shared smart album
-		// fallback, and the inner form carries no reference only because it is built before one is
-		// deserialized from a stored filter.
+		// Check the reference photo after parsing the filter. Stored membership filters
+		// run without a session, so this lookup does not recurse through session scope.
 		if visible, vErr := PhotoVisibleToSession(frm.Near, sess); vErr != nil {
 			log.Debugf("search: %s (check nearby)", vErr)
 			return nil, ErrNotFound

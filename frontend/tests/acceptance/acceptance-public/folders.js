@@ -79,9 +79,9 @@ test.meta("testID", "folders-002").meta({ mode: "public" })("Common: Update fold
   await album.openNthAlbum(0);
 
   await t
-    .expect(toolbar.toolbarDescription.nth(0).innerText)
+    .expect(album.headerDescription.innerText)
     .contains("Last holiday")
-    .expect(toolbar.toolbarSecondTitle.innerText)
+    .expect(album.headerTitle.innerText)
     .contains("MyFolder");
 
   await menu.openPage("folders");

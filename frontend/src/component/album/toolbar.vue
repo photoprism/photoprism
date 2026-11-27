@@ -4,12 +4,12 @@
     validate-on="invalid-input"
     autocomplete="off"
     class="p-photo-toolbar p-album-toolbar"
-    :class="{ 'album-navigation--cover': !compact && !searchOpen }"
+    :class="{ 'album-navigation--cover': !compact }"
     accept-charset="UTF-8"
     @focusout="onSearchFocusOut"
     @submit.prevent="submitSearch"
   >
-    <v-toolbar flat :style="toolbarStyle" :class="{ 'album-toolbar--cover': !compact && !searchOpen }" density="compact" class="page-toolbar">
+    <v-toolbar ref="toolbar" flat :style="toolbarStyle" :class="{ 'album-toolbar--cover': !compact }" density="compact" class="page-toolbar">
       <v-text-field
         v-if="canSearch && searchOpen"
         ref="search"
@@ -31,11 +31,18 @@
         @click:clear="clearSearch"
         @keydown.esc.stop.prevent="closeSearch"
       ></v-text-field>
-      <v-toolbar-title v-else :title="album.Title" class="page__title">
-        <router-link :to="{ name: collectionRoute }" class="album-back-link" :aria-label="T(collectionTitle)">
-          <v-icon>{{ $isRtl ? 'mdi-chevron-right' : 'mdi-chevron-left' }}</v-icon>
-          <bdi>{{ compact ? $util.balanceBidi(album.Title) : T(collectionTitle) }}</bdi>
-        </router-link>
+      <v-toolbar-title v-else :title="compact ? album.Title : undefined" class="page__title">
+        <span ref="breadcrumb" class="album-breadcrumb">
+          <span v-if="compact" ref="breadcrumbLabel" class="album-breadcrumb-measure" aria-hidden="true">
+            {{ T(collectionTitle) }}<v-icon size="small">{{ navIcon }}</v-icon><bdi>{{ $util.balanceBidi(album.Title) }}</bdi>
+          </span>
+          <router-link :to="{ name: collectionRoute }" class="album-back-link" :aria-label="T(collectionTitle)">
+            <v-icon v-if="!compact || narrowBreadcrumb">{{ $isRtl ? 'mdi-chevron-right' : 'mdi-chevron-left' }}</v-icon>
+            <bdi v-if="!compact || !narrowBreadcrumb">{{ T(collectionTitle) }}</bdi>
+          </router-link>
+          <v-icon v-if="compact && !narrowBreadcrumb" size="small" aria-hidden="true">{{ navIcon }}</v-icon>
+          <bdi v-if="compact" class="album-breadcrumb-title">{{ $util.balanceBidi(album.Title) }}</bdi>
+        </span>
       </v-toolbar-title>
 
       <div class="album-toolbar-actions">
@@ -46,7 +53,7 @@
               <v-icon>mdi-sort</v-icon><v-icon v-if="activeSortOption?.reversible" size="14">{{ sortDescending(activeSortOption) ? 'mdi-arrow-down' : 'mdi-arrow-up' }}</v-icon>
             </v-btn>
           </template>
-          <v-list class="album-sort-menu" density="compact">
+          <v-list :class="['album-sort-menu', { 'album-overlay-menu': !compact }]" density="compact">
             <v-list-item v-for="item in sorting" :key="item.value" :active="isActiveSort(item)" :class="`action-album-sort-${item.value}`" @click="selectSort(item.value)">
               <v-list-item-title>{{ item.text }}</v-list-item-title>
               <template v-if="item.reversible" #append>
@@ -63,14 +70,14 @@
               <v-icon class="album-view-arrow" size="12">mdi-menu-down</v-icon>
             </v-btn>
           </template>
-          <v-list density="compact">
+          <v-list :class="{ 'album-overlay-menu': !compact }" density="compact">
             <v-list-item :active="settings.view === 'cards'" prepend-icon="mdi-view-column" :title="$gettext('Cards')" class="action-view-cards" @click="setView('cards')"></v-list-item>
             <v-list-item v-if="listView" :active="settings.view === 'list'" prepend-icon="mdi-view-list" :title="$gettext('List')" class="action-view-list" @click="setView('list')"></v-list-item>
             <v-list-item :active="settings.view === 'mosaic'" prepend-icon="mdi-view-comfy" :title="$gettext('Mosaic')" class="action-view-mosaic" @click="setView('mosaic')"></v-list-item>
           </v-list>
         </v-menu>
 
-        <p-action-menu :items="menuActions" button-class="ms-1"></p-action-menu>
+        <p-action-menu :items="menuActions" button-class="ms-1" :list-class="compact ? '' : 'album-overlay-menu'"></p-action-menu>
       </div>
     </v-toolbar>
 
@@ -143,7 +150,8 @@ export default {
     const settings = this.$config.getSettings();
     const features = settings.features;
     return {
-      searchOpen: !!this.filter.q,
+      searchOpen: false,
+      narrowBreadcrumb: false,
       searchText: this.filter.q || "",
       expanded: false,
       canUpload: this.$config.allow("files", "upload") && features.upload,
@@ -169,15 +177,13 @@ export default {
   computed: {
     // toolbarStyle blends the cover controls into the normal PhotoPrism toolbar on scroll.
     toolbarStyle() {
-      const progress = this.searchOpen ? 1 : this.collapseProgress;
       return {
         ...this.coverStyle,
-        "--album-toolbar-opacity": progress,
-        "--album-toolbar-color": progress < 1 ? "var(--album-cover-ink, #fff)" : "rgb(var(--v-theme-on-secondary))",
-        "--album-toolbar-shade": progress > 0 ? "0.55" : this.coverStyle["--album-toolbar-shade"],
+        "--album-toolbar-opacity": this.collapseProgress,
+        "--album-toolbar-shade": this.collapseProgress > 0 && !this.compact ? "0.54" : this.coverStyle["--album-toolbar-shade"],
       };
     },
-    // canSearch distinguishes signed-in album readers from share-link visitors.
+    // canSearch reports whether the current session can use album search controls.
     canSearch() {
       return $session.getUser()?.Role !== "visitor" && this.$config.allow("photos", "search");
     },
@@ -200,20 +206,52 @@ export default {
     },
   },
   watch: {
+    // canSearch closes the field when the session can no longer search.
+    canSearch(allowed) {
+      this.searchOpen = allowed && !!this.filter.q;
+    },
+    // compact measures the breadcrumb when the album title enters the toolbar.
+    compact: { flush: "post", handler: "measureBreadcrumb" },
+    // searchOpen measures the breadcrumb after returning from the search input.
+    searchOpen: { flush: "post", handler: "measureBreadcrumb" },
+    // album.Title measures changed breadcrumbs after an album edit.
+    "album.Title": { flush: "post", handler: "measureBreadcrumb" },
     // filter.q restores the submitted text after history navigation.
     "filter.q"(value) {
       this.searchText = value || "";
-      if (value) {
-        this.searchOpen = true;
-      }
+      this.searchOpen = this.canSearch && (!!value || this.searchOpen);
     },
     // album.UID resets the search presentation when another album is opened.
     "album.UID"() {
-      this.searchOpen = !!this.filter.q;
+      this.searchOpen = this.canSearch && !!this.filter.q;
       this.searchText = this.filter.q || "";
     },
   },
+  // created restores the submitted query for users with search controls.
+  created() {
+    this.searchOpen = this.canSearch && !!this.filter.q;
+  },
+  // mounted observes the toolbar width for the compact breadcrumb.
+  mounted() {
+    if (typeof ResizeObserver === "undefined" || !this.$refs.toolbar?.$el) {
+      return;
+    }
+    this.breadcrumbObserver = new ResizeObserver(this.measureBreadcrumb);
+    this.breadcrumbObserver.observe(this.$refs.toolbar.$el);
+    this.measureBreadcrumb();
+  },
+  // beforeUnmount disconnects the toolbar observer.
+  beforeUnmount() {
+    this.breadcrumbObserver?.disconnect();
+  },
   methods: {
+    // measureBreadcrumb chooses the back link layout by its available width.
+    measureBreadcrumb() {
+      const { breadcrumb, breadcrumbLabel } = this.$refs;
+      if (breadcrumb && breadcrumbLabel) {
+        this.narrowBreadcrumb = breadcrumbLabel.scrollWidth > breadcrumb.clientWidth;
+      }
+    },
     // openSearch exposes the album query field and gives it keyboard focus.
     openSearch() {
       this.searchOpen = true;
@@ -238,7 +276,7 @@ export default {
     // closeSearch restores the submitted query and closes the field when no query is active.
     closeSearch() {
       this.searchText = this.filter.q || "";
-      this.searchOpen = !!this.filter.q;
+      this.searchOpen = this.canSearch && !!this.filter.q;
     },
     // isActiveSort groups the two date directions under a single menu item.
     isActiveSort(item) {

@@ -193,7 +193,7 @@ func wsAlbumUpdates(session *entity.Session, fields event.Data) (event.Data, boo
 		return nil, false
 	}
 	visible := make([]string, 0)
-	// Batches bound the SQL parameter count even for a library-wide cover refresh.
+	// Query albums in batches of 100.
 	for offset := 0; offset < len(uids); offset += 100 {
 		var albums entity.Albums
 		end := min(offset+100, len(uids))
