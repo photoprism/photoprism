@@ -60,7 +60,7 @@ sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier n
 echo "Installing TestCafe..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier --loglevel=error "testcafe@$TESTCAFE_VERSION"
 # Installs Mermaid CLI for rendering diagrams; --ignore-scripts skips puppeteer's
-# Chromium download since the dev image already ships system chromium via apt.
+# Chromium download since the dev image already ships a browser via install-chrome.sh.
 echo "Installing Mermaid CLI..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier --loglevel=error "@mermaid-js/mermaid-cli@$MERMAID_VERSION"
 echo "Installing Vitest..."

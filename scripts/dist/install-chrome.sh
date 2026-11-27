@@ -2,24 +2,25 @@
 
 # Installs a Chromium-based browser on Linux:
 #   - AMD64: Google Chrome stable (apt repo at dl.google.com).
-#   - ARM64: Chromium (native apt package; no snap).
+#   - ARM64:
+#       - Ubuntu hosts: Google Chrome stable from the same apt repo (default),
+#         or Chromium as a fallback, see CHROMIUM_SOURCE below.
 #       - Debian hosts: native apt chromium.
-#       - Ubuntu hosts: chromium from PhotoPrism's internal mirror at
-#         https://dl.photoprism.app/dist/chromium/. The mirror is a small
-#         reprepro tree of the XtraDeb PPA's chromium / chromium-driver /
-#         chromium-sandbox .debs (BSD-1-Clause); we mirror them so CI builds
-#         survive Launchpad outages. Ubuntu's own chromium-browser is a
-#         snap-shim transitional package and unusable in Docker.
-#         Upstream PPA: https://launchpad.net/~xtradeb/+archive/ubuntu/apps
 #
-# Override the ARM64 Ubuntu chromium source via env var:
-#   CHROMIUM_SOURCE=internal  (default) — https://dl.photoprism.app/dist/chromium/
-#   CHROMIUM_SOURCE=xtradeb             — https://ppa.launchpadcontent.net/xtradeb/apps/ubuntu
-# Use 'xtradeb' only when our mirror has fallen behind a chromium update
-# (e.g. CVE patch landed at XtraDeb but cron hasn't refreshed yet).
+# Override the ARM64 Ubuntu browser source via env var (unset or empty selects
+# google; the variable applies when the script is run directly, since the
+# develop Dockerfiles do not pass it through):
+#   CHROMIUM_SOURCE=google    (default) — Google Chrome stable, https://dl.google.com/linux/chrome/deb/
+#   CHROMIUM_SOURCE=internal            — Chromium from https://dl.photoprism.app/dist/chromium/
+#   CHROMIUM_SOURCE=xtradeb             — Chromium from https://ppa.launchpadcontent.net/xtradeb/apps/ubuntu
+# The internal mirror is a small reprepro tree of the XtraDeb PPA's chromium /
+# chromium-driver / chromium-sandbox .debs (BSD-1-Clause), kept so builds
+# survive Launchpad outages. Ubuntu's own chromium-browser is a snap-shim
+# transitional package and unusable in Docker.
+# Upstream PPA: https://launchpad.net/~xtradeb/+archive/ubuntu/apps
 #
-# Distribution package set installed (named explicitly on the apt-get install
-# line so a missing piece fails fast and visibly):
+# Chromium package set installed on Debian and by the Ubuntu fallbacks (named
+# explicitly on the apt-get install line so a missing piece fails fast and visibly):
 #   - chromium                   — the browser binary
 #   - chromium-common            — shared resources (strict-version Depends of chromium)
 #   - chromium-driver            — chromedriver for headless / Selenium / TestCafe
@@ -92,8 +93,7 @@ DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 . /etc/os-release
 
 # Adds PhotoPrism's internal chromium mirror as an apt source and installs
-# chromium from it. Mirror is rebuilt from XtraDeb upstream weekly via
-# `make -C services/downloads chromium` on web2 (services/downloads/scripts/).
+# chromium from it. The mirror tracks the XtraDeb PPA.
 install_chromium_from_internal_mirror() {
   local keyring=/etc/apt/keyrings/photoprism-apt.gpg
   local src=/etc/apt/sources.list.d/photoprism-chromium.sources
@@ -174,20 +174,26 @@ EOF
   echo "Installed AI feature policies in $dir."
 }
 
+# Adds Google's Chrome apt repo for the given Debian architecture (amd64 or arm64) and installs Chrome stable.
+# The repo is bootstrapped just far enough to install the package; its postinst then installs its own keyring
+# and manages this list itself. Written, not appended, so a re-run cannot leave apt with a duplicate source.
+install_google_chrome() {
+  local arch="$1"
+  local keyring="/etc/apt/keyrings/dl-ssl.google.com.gpg"
+
+  echo "Installing Google Chrome (stable) on ${ID} for ${DESTARCH^^}..."
+  install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --no-tty --batch --yes --dearmor -o "$keyring"
+  echo "deb [arch=${arch} signed-by=${keyring}] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+  apt-get update
+  apt-get -qq install google-chrome-stable
+  install_ai_policies /etc/opt/chrome/policies
+}
+
 case $DESTARCH in
   amd64 | AMD64 | x86_64 | x86-64)
-    echo "Installing Google Chrome (stable) on ${ID} for ${DESTARCH^^}..."
     set -e
-    # Bootstrap the repo just far enough to install the package; its postinst
-    # then installs its own keyring and manages this list itself. Written, not
-    # appended, so a re-run cannot leave apt with a duplicate source.
-    chrome_keyring="/etc/apt/keyrings/dl-ssl.google.com.gpg"
-    install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --no-tty --batch --yes --dearmor -o "$chrome_keyring"
-    echo "deb [arch=amd64 signed-by=${chrome_keyring}] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
-    apt-get update
-    apt-get -qq install google-chrome-stable
-    install_ai_policies /etc/opt/chrome/policies
+    install_google_chrome amd64
     ;;
 
   arm64 | ARM64 | aarch64)
@@ -197,32 +203,37 @@ case $DESTARCH in
         echo "Installing Chromium on ${ID} for ${DESTARCH^^}..."
         apt-get update
         apt-get -qq install chromium chromium-common chromium-driver chromium-sandbox
+        install_ai_policies /etc/chromium/policies
         ;;
 
       ubuntu)
         apt-get -qq install -y --no-install-recommends ca-certificates curl gnupg
-        case "${CHROMIUM_SOURCE:-internal}" in
+        case "${CHROMIUM_SOURCE:-google}" in
+          google)
+            install_google_chrome arm64
+            ;;
           internal)
             echo "Installing Chromium (via PhotoPrism internal mirror) on ${ID} ${VERSION_CODENAME:-} for ${DESTARCH^^}..."
             install_chromium_from_internal_mirror
+            install_ai_policies /etc/chromium/policies
             ;;
           xtradeb)
             echo "Installing Chromium (via XtraDeb PPA — fallback) on ${ID} ${VERSION_CODENAME:-} for ${DESTARCH^^}..."
             install_chromium_from_xtradeb_ppa
+            install_ai_policies /etc/chromium/policies
             ;;
           *)
-            echo "Unknown CHROMIUM_SOURCE='${CHROMIUM_SOURCE}' (expected 'internal' or 'xtradeb')" 1>&2
+            echo "Unknown CHROMIUM_SOURCE='${CHROMIUM_SOURCE}' (expected 'google', 'internal' or 'xtradeb')" 1>&2
             exit 1
             ;;
         esac
         ;;
 
       *)
-        echo "Unsupported distribution \"${ID}\" for ARM64 Chromium install" 1>&2
+        echo "Unsupported distribution \"${ID}\" for ARM64 browser install" 1>&2
         exit 1
         ;;
     esac
-    install_ai_policies /etc/chromium/policies
     ;;
 
   *)
