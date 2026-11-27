@@ -1,5 +1,5 @@
 # Develop Base Image
-ARG DOCKERFILE_IMAGE_TAG=261123-stonking
+ARG DOCKERFILE_IMAGE_TAG=261127-stonking
 FROM photoprism/develop:${DOCKERFILE_IMAGE_TAG}
 
 # Harden npm usage by default (applies to npm ci / install in dev container)
