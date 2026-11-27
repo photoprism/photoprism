@@ -32,6 +32,37 @@
     top: 156px;
 }
 
+/* v-window is overflow:hidden, so it becomes the sticky scrollport. A top offset
+   measured from that window shifts the year banner down over the first photos. */
+.p-page-discover .v-window,
+.p-page-discover .v-window__container {
+    overflow: visible;
+}
+
+.p-page-discover .p-discover-year-header {
+    position: sticky;
+    top: var(--p-discover-sticky-top, 128px);
+    z-index: 9;
+    padding: 12px 16px 8px;
+}
+
+.p-page-discover .p-discover-year-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.75rem;
+}
+
+.p-page-discover .p-discover-year-meta {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.7;
+}
+
+.p-page-discover .p-discover-year-count::before {
+    content: " · ";
+}
+
 .p-page .v-toolbar-title {
     overflow: hidden;
     text-overflow: ellipsis;
