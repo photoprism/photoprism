@@ -11,6 +11,8 @@
       :update-query="updateQuery"
       :on-close="onClose"
       :embedded="embedded"
+      :loading="loading || !listen"
+      :sort-options="sortOptions"
       class="p-page__navigation"
     />
 
@@ -74,7 +76,9 @@ import PPhotoViewMosaic from "component/photo/view/mosaic.vue";
 import PPhotoViewList from "component/photo/view/list.vue";
 import PLoading from "component/loading.vue";
 import PScroll from "component/scroll.vue";
+import { photoOptions, photoSortKeys, resolveSort, sortParams } from "common/sort";
 import { getAppStorage } from "common/storage";
+import { photoTypeOptions } from "common/photo-types";
 
 const appStorage = getAppStorage();
 
@@ -118,6 +122,7 @@ export default {
     },
   },
   expose: ["onShortCut"],
+  // data initializes the page filters and result state.
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
@@ -131,7 +136,7 @@ export default {
     const label = query["label"] ? query["label"] : "";
     const latlng = query["latlng"] ? query["latlng"] : "";
     const view = this.getViewType();
-    const order = this.sortOrder();
+    const sort = this.resolveSort();
     const filter = {
       country: country,
       camera: camera,
@@ -141,8 +146,9 @@ export default {
       year: year,
       month: month,
       color: color,
-      order: order,
-      reverse: this.sortReverse(),
+      order: sort.order,
+      reverse: sort.reverse,
+      type: this.mediaType(query),
       q: q,
     };
 
@@ -195,6 +201,10 @@ export default {
     };
   },
   computed: {
+    // sortOptions returns the entries available on this photo route.
+    sortOptions() {
+      return photoOptions(this.$route.name);
+    },
     selectMode: function () {
       return this.selection.length > 0;
     },
@@ -203,6 +213,7 @@ export default {
     },
   },
   watch: {
+    // $route restores filters and searches when the active route changes.
     $route() {
       if (!this.$view.isActive(this)) {
         return;
@@ -232,8 +243,8 @@ export default {
       this.filter.color = query["color"] ? query["color"] : "";
       this.filter.label = query["label"] ? query["label"] : "";
       this.filter.latlng = query["latlng"] ? query["latlng"] : "";
-      this.filter.order = this.sortOrder();
-      this.filter.reverse = this.sortReverse();
+      Object.assign(this.filter, this.resolveSort());
+      this.filter.type = this.mediaType(query);
 
       this.settings.view = this.getViewType();
 
@@ -370,50 +381,17 @@ export default {
 
       return contexts.Default;
     },
-    sortOrder() {
+    // resolveSort restores the sort preference for this photo page.
+    resolveSort() {
       if (this.embedded) {
-        return "newest";
+        return { order: "newest", reverse: false };
       }
-
-      let storageKey;
-      let defaultOrder;
-
-      switch (this.getContext()) {
-        case contexts.Archive:
-          storageKey = "archive.order";
-          defaultOrder = "archived";
-          break;
-        case contexts.Favorites:
-          storageKey = "favorites.order";
-          defaultOrder = "newest";
-          break;
-        case contexts.Hidden:
-          storageKey = "hidden.order";
-          defaultOrder = "added";
-          break;
-        case contexts.Review:
-          storageKey = "review.order";
-          defaultOrder = "added";
-          break;
-        default:
-          storageKey = "photos.order";
-          defaultOrder = "newest";
-      }
-
-      let queryOrder = this.$route.query["order"];
-      let storageOrder = appStorage.getItem(storageKey);
-
-      if (queryOrder) {
-        appStorage.setItem(storageKey, queryOrder);
-        return queryOrder;
-      } else if (storageOrder) {
-        return storageOrder;
-      }
-
-      return defaultOrder;
+      const defaults = { archive: "archived", hidden: "added", review: "added" };
+      return resolveSort(this.$route.query, appStorage, photoSortKeys(this.$route.name), photoOptions(this.$route.name), defaults[this.$route.name] || "newest");
     },
-    sortReverse() {
-      return !!this.$route?.query["reverse"] && this.$route.query["reverse"] === "true";
+    // mediaType reads the URL media filter without overriding a fixed-type page.
+    mediaType(query) {
+      return photoTypeOptions(this.staticFilter, query.q).some((item) => item.value === query.type) ? query.type : "";
     },
     openDate(index) {
       const photo = this.results[index];
@@ -489,6 +467,7 @@ export default {
 
       return true;
     },
+    // loadMore fetches the next batch with the active sort and fixed scope.
     loadMore(force) {
       if (!force && (this.scrollDisabled || this.$view.isHidden(this))) {
         return;
@@ -516,7 +495,7 @@ export default {
         Object.assign(params, this.staticFilter);
       }
 
-      Photo.search(params)
+      Photo.search(sortParams(params))
         .then((response) => {
           this.results = this.dirty ? response.models : Photo.mergeResponse(this.results, response);
           this.complete = response.count < response.limit;
@@ -576,6 +555,7 @@ export default {
         appStorage.setItem("photos." + key, this.settings[key]);
       }
     },
+    // updateFilter applies recognized filter values.
     updateFilter(props) {
       if (!props || typeof props !== "object" || props.target) {
         return;
@@ -594,12 +574,13 @@ export default {
         }
       }
     },
+    // updateQuery replaces the route with the current filter values.
     updateQuery(props) {
-      this.updateFilter(props);
-
-      if (this.loading) {
+      if (this.loading || this.listen === false) {
         return false;
       }
+
+      this.updateFilter(props);
 
       const query = {
         view: this.settings.view,
@@ -621,6 +602,7 @@ export default {
 
       return true;
     },
+    // searchParams builds the request using the page filters and fixed scope.
     searchParams() {
       const params = {
         count: this.searchCount(),
@@ -634,7 +616,7 @@ export default {
         Object.assign(params, this.staticFilter);
       }
 
-      return params;
+      return sortParams(params);
     },
     refresh(props) {
       this.updateSettings(props);
