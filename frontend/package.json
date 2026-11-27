@@ -7,7 +7,7 @@
   "private": true,
   "//vuetify": "Vuetify is pinned to 4.3.4 (no caret, exact version). Before bumping, test the photo edit dialog in Chrome: the Country and Time Zone autocompletes must stay open on click (#5538; 3.12.3 to 3.13.x closed long autocomplete and select menus on open) and filter as you type. The UI keeps the Vuetify 3 appearance: vite.config.mjs compiles Vuetify's styles with src/css/vuetify/settings.scss (Vuetify 3 breakpoints, Material Design 2 typography), src/css/layers.css declares the cascade layer order, src/css/vuetify-v3.css restores the Vuetify 3 reset, grid, typography, rail and slider layout, component shadows, and elevation classes, src/css/vuetify-overrides.css holds rules for Vuetify's override layer, and src/app.js sets the matching display thresholds; check them against the release notes of a new major or minor version. See frontend/README.md.",
   "scripts": {
-    "acceptance-local": "testcafe chromium --selector-timeout 5000 -S -s tests/acceptance/screenshots tests/acceptance",
+    "acceptance-local": "testcafe chrome --selector-timeout 5000 -S -s tests/acceptance/screenshots tests/acceptance",
     "build": "vite build",
     "build-analyze": "cross-env BUILD_ENV=analyze vite build",
     "build-dev": "cross-env BUILD_ENV=development vite build",
